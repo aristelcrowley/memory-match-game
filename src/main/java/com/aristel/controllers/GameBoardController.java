@@ -14,8 +14,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.aristel.networks.ClientConnection;
-import com.aristel.networks.IncomingMessageListener;
+import com.aristel.network.ClientConnection;
+import com.aristel.network.IncomingMessageListener;
 
 public class GameBoardController implements IncomingMessageListener {
 

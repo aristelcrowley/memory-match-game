@@ -1,4 +1,4 @@
-package com.aristel.networks;
+package com.aristel.network;
 
 public interface IncomingMessageListener {
     void onMessageReceived(String message);
