@@ -30,7 +30,14 @@ public class ClientHandler extends Thread {
                     String roomId = parts[1];
                     boolean created = GameServer.createRoom(roomId);
                     if (created) {
-                        sendMessage("MSG:Room '" + roomId + "' created successfully! Now type JOIN:" + roomId);
+                        sendMessage("MSG:Room '" + roomId + "' created.");
+                        
+                        GameRoom room = GameServer.findRoom(roomId);
+                        if (room.addPlayer(this)) {
+                            this.currentRoom = room;
+                            sendMessage("JOINED:" + this.playerID);
+                            sendMessage("MSG:You are the Room Master!");
+                        }
                     } else {
                         sendMessage("ERROR:Room '" + roomId + "' already exists.");
                     }
@@ -39,17 +46,19 @@ public class ClientHandler extends Thread {
                     GameRoom room = GameServer.findRoom(roomId);
                     
                     if (room == null) {
-                        sendMessage("ERROR:Room '" + roomId + "' does not exist. Create it first.");
+                        sendMessage("ERROR:Room does not exist.");
                     } else {
                         if (room.addPlayer(this)) {
                             this.currentRoom = room;
                             sendMessage("JOINED:" + this.playerID);
                         } else {
-                            sendMessage("ERROR:Room is full or game already started.");
+                            sendMessage("ERROR:Room Full");
                         }
                     }
                 } else if (command.equals("START")) {
-                    if (currentRoom != null) currentRoom.startGame();
+                    if (currentRoom != null) {
+                        currentRoom.startGame(this); 
+                    }
                 } else if (command.equals("CLICK")) {
                     if (currentRoom != null) {
                         int cardIndex = Integer.parseInt(parts[1]);
@@ -61,9 +70,7 @@ public class ClientHandler extends Thread {
             System.out.println("Player disconnected");
         } finally {
             try { 
-                if (currentRoom != null) {
-                    currentRoom.removePlayer(this);
-                }
+                if (currentRoom != null) currentRoom.removePlayer(this);
                 socket.close(); 
             } catch (IOException e) {}
         }
