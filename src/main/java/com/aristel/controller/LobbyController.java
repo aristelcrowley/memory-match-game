@@ -1,4 +1,4 @@
-package com.aristel.controllers;
+package com.aristel.controller;
 
 import com.aristel.MainApp;
 import com.aristel.network.ClientConnection;

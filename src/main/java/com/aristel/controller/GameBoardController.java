@@ -1,4 +1,4 @@
-package com.aristel.controllers;
+package com.aristel.controller;
 
 import javafx.application.Platform;
 import javafx.fxml.FXML;
