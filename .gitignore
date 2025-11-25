@@ -1,1 +1,3 @@
-/target
+target/
+.env
+manual_build_run.txt
