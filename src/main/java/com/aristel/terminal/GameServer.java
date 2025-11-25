@@ -33,4 +33,11 @@ public class GameServer {
     public static synchronized GameRoom findRoom(String roomId) {
         return rooms.get(roomId);
     }
+
+    public static synchronized void removeRoom(String roomId) {
+        if (rooms.containsKey(roomId)) {
+            rooms.remove(roomId);
+            System.out.println("Room '" + roomId + "' is empty and has been deleted.");
+        }
+    }
 }

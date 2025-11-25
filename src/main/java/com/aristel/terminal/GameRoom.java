@@ -7,10 +7,8 @@ public class GameRoom {
     private List<ClientHandler> players = new ArrayList<>();
     private List<Integer> board = new ArrayList<>(); 
     private boolean[] matchedCards; 
-    
     private boolean isGameRunning = false;
-    private int currentPlayerIndex = 0; 
-    
+    private int currentPlayerIndex = 0;  
     private int firstCardIndex = -1; 
     private boolean isWaitingForDelay = false; 
 
@@ -24,6 +22,20 @@ public class GameRoom {
         players.add(p);
         broadcast("MSG:Player " + p.playerID + " connected. Total: " + players.size());
         return true;
+    }
+
+    public synchronized void removePlayer(ClientHandler p) {
+        players.remove(p);
+        broadcast("MSG:Player " + p.playerID + " left the room.");
+        
+        if (players.isEmpty()) {
+            GameServer.removeRoom(this.roomId);
+        } else {
+            if (isGameRunning && players.size() < 2) {
+                isGameRunning = false;
+                broadcast("MSG:Not enough players. Game Stopped.");
+            }
+        }
     }
 
     public synchronized void startGame() {

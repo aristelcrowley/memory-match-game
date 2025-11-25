@@ -60,7 +60,12 @@ public class ClientHandler extends Thread {
         } catch (IOException e) {
             System.out.println("Player disconnected");
         } finally {
-            try { socket.close(); } catch (IOException e) {}
+            try { 
+                if (currentRoom != null) {
+                    currentRoom.removePlayer(this);
+                }
+                socket.close(); 
+            } catch (IOException e) {}
         }
     }
 
