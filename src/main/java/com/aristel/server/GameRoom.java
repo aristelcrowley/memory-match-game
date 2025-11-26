@@ -147,6 +147,18 @@ public class GameRoom {
         for (ClientHandler p : players) p.sendMessage(msg);
     }
 
+    public String getRoomId() {
+        return roomId;
+    }
+
+    public int getPlayerCount() {
+        return players.size();
+    }
+
+    public String getMasterName() {
+        return (roomMaster != null) ? "Player " + roomMaster.playerID : "Unknown";
+    }
+
     private class MistakeTimer extends Thread {
         int card1, card2;
         public MistakeTimer(int c1, int c2) { this.card1 = c1; this.card2 = c2; }
