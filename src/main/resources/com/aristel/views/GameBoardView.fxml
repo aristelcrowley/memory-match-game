@@ -31,7 +31,7 @@
 
                 <VBox spacing="10" VBox.vgrow="ALWAYS">
                     <Label text="SOUL RANKINGS" styleClass="sidebar-title"/>
-                    <ScrollPane fitToWidth="true" styleClass="transparent-scroll">
+                    <ScrollPane fitToWidth="true" styleClass="transparent-scroll" hbarPolicy="NEVER" vbarPolicy="NEVER">
                         <VBox fx:id="scoreContainer" spacing="5"/>
                     </ScrollPane>
                 </VBox>
@@ -46,12 +46,19 @@
     </BorderPane>
 
     <AnchorPane fx:id="startPopup" styleClass="overlay-dim" visible="false">
-        <VBox alignment="CENTER" styleClass="popup-box" maxWidth="400" maxHeight="200" 
+        <VBox alignment="CENTER" styleClass="popup-box" maxWidth="400" maxHeight="300" 
               AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0" AnchorPane.topAnchor="0" AnchorPane.bottomAnchor="0">
-            <translateX>0</translateX> <VBox alignment="CENTER" spacing="10" styleClass="popup-inner">
+            
+            <VBox alignment="CENTER" spacing="15" styleClass="popup-inner">
                 <Label text="FATE CHOSEN" styleClass="popup-header"/>
-                <Label fx:id="startTurnLabel" text="Player X Starts" styleClass="popup-big-text"/>
-                <Label fx:id="countdownLabel" text="Begins in 5..." styleClass="popup-timer"/>
+                
+                <Label text="Turn Order:" styleClass="instruction-text"/>
+                
+                <VBox fx:id="startOrderContainer" alignment="CENTER" spacing="5"/>
+                
+                <Label fx:id="countdownLabel" text="Begins in 5..." styleClass="popup-timer">
+                    <padding><Insets top="10"/></padding>
+                </Label>
             </VBox>
         </VBox>
     </AnchorPane>

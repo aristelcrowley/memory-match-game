@@ -122,5 +122,17 @@
     -fx-text-fill: #7f8c8d;
 }
 
-.transparent-scroll { -fx-background: transparent; -fx-background-color: transparent; }
-.transparent-scroll .viewport { -fx-background-color: transparent; }
+.transparent-scroll {
+    -fx-background: transparent;
+    -fx-background-color: transparent;
+}
+.transparent-scroll .viewport {
+    -fx-background-color: transparent;
+}
+
+.transparent-scroll > .scroll-bar:horizontal,
+.transparent-scroll > .scroll-bar:vertical {
+    -fx-opacity: 0;
+    -fx-padding: -10;
+    -fx-max-width: 0;
+}

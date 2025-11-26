@@ -201,7 +201,7 @@ public class GameRoom {
         public MistakeTimer(int c1, int c2) { this.card1 = c1; this.card2 = c2; }
         @Override
         public void run() {
-            try { Thread.sleep(2000); } catch (InterruptedException e) {}
+            try { Thread.sleep(1000); } catch (InterruptedException e) {}
             finishMismatch(card1, card2);
         }
     }

@@ -17,6 +17,7 @@ import javafx.scene.layout.VBox;
 import javafx.util.Duration;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class GameBoardController implements IncomingMessageListener {
 
@@ -26,7 +27,7 @@ public class GameBoardController implements IncomingMessageListener {
     @FXML private VBox scoreContainer;
 
     @FXML private AnchorPane startPopup;
-    @FXML private Label startTurnLabel;
+    @FXML private VBox startOrderContainer; 
     @FXML private Label countdownLabel;
 
     @FXML private AnchorPane endPopup;
@@ -39,6 +40,7 @@ public class GameBoardController implements IncomingMessageListener {
     private Image backCardImage;
     
     private int myPlayerId = -1;
+    private int currentTurnId = -1; 
     private Map<Integer, Integer> playerScores = new HashMap<>();
     private boolean inputLocked = true; 
 
@@ -48,7 +50,6 @@ public class GameBoardController implements IncomingMessageListener {
         loadImages();
         
         ClientConnection.getInstance().sendMessage("GET_GAME_STATE");
-        
         inputLocked = true; 
     }
 
@@ -92,6 +93,7 @@ public class GameBoardController implements IncomingMessageListener {
 
             case "TURN":
                 int currentTurn = Integer.parseInt(parts[1]);
+                this.currentTurnId = currentTurn; // Update local state
                 Platform.runLater(() -> updateTurn(currentTurn));
                 break;
                 
@@ -110,6 +112,30 @@ public class GameBoardController implements IncomingMessageListener {
     private void startSequence(int totalCards) {
         setupBoard(totalCards);
         
+        startOrderContainer.getChildren().clear();
+        List<Integer> sortedIds = new ArrayList<>(playerScores.keySet());
+        Collections.sort(sortedIds); 
+        
+        int rank = 1;
+        int startIndex = sortedIds.indexOf(currentTurnId);
+        if (startIndex != -1) {
+            Collections.rotate(sortedIds, -startIndex);
+        }
+
+        for (Integer pid : sortedIds) {
+            Label lbl = new Label(rank + ". Player " + pid);
+            lbl.getStyleClass().add("popup-big-text");
+            lbl.setStyle("-fx-font-size: 24px;"); 
+            
+            if (pid == myPlayerId) {
+                lbl.setStyle("-fx-text-fill: #4cd137; -fx-font-size: 24px;"); 
+            } else {
+                lbl.setStyle("-fx-text-fill: white; -fx-font-size: 24px;");
+            }
+            startOrderContainer.getChildren().add(lbl);
+            rank++;
+        }
+
         startPopup.setVisible(true);
         
         Timeline timeline = new Timeline(
@@ -170,15 +196,15 @@ public class GameBoardController implements IncomingMessageListener {
     }
 
     private void updateTurn(int playerId) {
-        String name = (playerId == myPlayerId) ? "YOUR TURN" : "Player " + playerId;
-        turnLabel.setText(name);
-        startTurnLabel.setText(name); 
+        String displayName = "Player " + playerId;
         
         if (playerId == myPlayerId) {
-            turnLabel.setStyle("-fx-text-fill: #4cd137;"); 
+            turnLabel.setText(displayName + " (You)");
+            turnLabel.setStyle("-fx-text-fill: #4cd137;"); // Green
             instructionLabel.setText("Choose your destiny.");
         } else {
-            turnLabel.setStyle("-fx-text-fill: #f1c40f;"); 
+            turnLabel.setText(displayName);
+            turnLabel.setStyle("-fx-text-fill: #f1c40f;"); // Gold
             instructionLabel.setText("Player " + playerId + " is choosing...");
         }
     }
@@ -206,15 +232,24 @@ public class GameBoardController implements IncomingMessageListener {
     private void renderScoreboard() {
         scoreContainer.getChildren().clear();
         
-        playerScores.entrySet().stream()
+        List<Map.Entry<Integer, Integer>> sortedList = playerScores.entrySet().stream()
             .sorted((k1, k2) -> k2.getValue().compareTo(k1.getValue()))
-            .forEach(entry -> {
-                String name = (entry.getKey() == myPlayerId) ? "YOU" : "Player " + entry.getKey();
-                Label lbl = new Label(name + ": " + entry.getValue() + " pts");
-                lbl.getStyleClass().add("score-text-rank");
-                if (entry.getKey() == myPlayerId) lbl.setStyle("-fx-text-fill: #4cd137;"); 
-                scoreContainer.getChildren().add(lbl);
-            });
+            .collect(Collectors.toList());
+
+        int rank = 1;
+        for (Map.Entry<Integer, Integer> entry : sortedList) {
+            String name = "Player " + entry.getKey();
+            
+            Label lbl = new Label(rank + ". " + name + ": " + entry.getValue() + " pts");
+            lbl.getStyleClass().add("score-text-rank");
+            
+            if (entry.getKey() == myPlayerId) {
+                lbl.setStyle("-fx-text-fill: #4cd137;"); 
+            }
+            
+            scoreContainer.getChildren().add(lbl);
+            rank++;
+        }
     }
 
     private void showEndScreen() {
