@@ -78,6 +78,10 @@ public class ClientHandler extends Thread {
                     if (currentRoom != null) {
                         currentRoom.sendStateToPlayer(this);
                     }
+                } else if (command.equals("GET_GAME_STATE")) {
+                    if (currentRoom != null) {
+                        currentRoom.sendGameState(this);
+                    }
                 }
             }
         } catch (IOException e) {

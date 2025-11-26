@@ -172,6 +172,18 @@ public class GameRoom {
         p.sendMessage(sb.toString());
     }
 
+    public void sendGameState(ClientHandler p) {
+        int totalCards = players.size() * 10;
+        p.sendMessage("GAME_INIT:" + totalCards);
+
+        StringBuilder sb = new StringBuilder("SCORES:");
+        for (ClientHandler player : players) {
+            sb.append(player.playerID).append("=").append(player.score).append(",");
+        }
+        p.sendMessage(sb.toString());
+        p.sendMessage("TURN:" + players.get(currentPlayerIndex).playerID);
+    }
+
     public String getRoomId() {
         return roomId;
     }
