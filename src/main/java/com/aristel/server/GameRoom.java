@@ -6,7 +6,7 @@ public class GameRoom {
     private String roomId;
     private List<ClientHandler> players = new ArrayList<>();
     private ClientHandler roomMaster; 
-    
+    private int nextPlayerId = 0;
     private List<Integer> board = new ArrayList<>(); 
     private boolean[] matchedCards; 
     private boolean isGameRunning = false;
@@ -21,7 +21,7 @@ public class GameRoom {
     public synchronized boolean addPlayer(ClientHandler p) {
         if (players.size() >= 4 || isGameRunning) return false;
         
-        p.playerID = players.size();
+        p.playerID = nextPlayerId++;
         players.add(p);
 
         if (players.size() == 1) {
