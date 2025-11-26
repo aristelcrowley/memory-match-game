@@ -28,7 +28,7 @@
             <padding><Insets top="30" right="30" bottom="30" left="30"/></padding>
 
             <VBox alignment="CENTER" spacing="5">
-                <Label fx:id="roomNameLabel" text="LOADING..." styleClass="room-title"/>
+                <padding><Insets bottom="30"/></padding> <Label fx:id="roomNameLabel" text="LOADING..." styleClass="room-title"/>
                 <Label fx:id="playerCountLabel" text="Players: -/4" styleClass="room-subtitle"/>
             </VBox>
 

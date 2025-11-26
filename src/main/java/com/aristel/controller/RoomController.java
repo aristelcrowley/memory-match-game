@@ -37,14 +37,12 @@ public class RoomController implements IncomingMessageListener {
 
     @Override
     public void onMessageReceived(String message) {
-        System.out.println("[ROOM RAW] " + message); // Check your terminal for this!
-
         if (message.startsWith("ROOM_STATE:")) {
             Platform.runLater(() -> updateRoomUI(message));
         }
         else if (message.startsWith("MSG:")) {
             String text = message.substring(4);
-            System.out.println("[ROOM LOG] Adding: " + text); // Debug
+            System.out.println("[ROOM LOG] Adding: " + text); 
             Platform.runLater(() -> addToLog(text));
         }
         else if (message.startsWith("GAME_START:")) {
@@ -120,7 +118,14 @@ public class RoomController implements IncomingMessageListener {
         } catch (Exception e) { System.err.println("Missing profile.png"); }
 
         Label nameLbl = new Label("Player " + playerId);
-        nameLbl.getStyleClass().add("player-name");
+        
+        if (playerId == this.myPlayerId) {
+            nameLbl.getStyleClass().add("player-name-self");
+            nameLbl.setText(nameLbl.getText() + " (YOU)"); 
+        } else {
+            nameLbl.getStyleClass().add("player-name");
+        }
+        
         card.getChildren().add(nameLbl);
 
         if (isMaster) {
@@ -133,7 +138,7 @@ public class RoomController implements IncomingMessageListener {
         }
 
         HBox spacer = new HBox();
-        HBox.setHgrow(spacer, Priority.ALWAYS);
+        javafx.scene.layout.HBox.setHgrow(spacer, javafx.scene.layout.Priority.ALWAYS);
         card.getChildren().add(spacer);
 
         return card;
