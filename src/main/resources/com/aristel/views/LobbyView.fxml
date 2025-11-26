@@ -5,6 +5,7 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.FlowPane?>
@@ -20,19 +21,25 @@
 
     <BorderPane>
         <top>
-            <HBox alignment="CENTER_RIGHT" spacing="15.0" styleClass="top-bar">
+            <HBox alignment="CENTER_LEFT" spacing="20.0" styleClass="top-bar">
                 <padding>
                     <Insets top="20" right="30" left="30" bottom="20"/>
                 </padding>
                 
-                <Label text="The Fate of Arcana" styleClass="title-text" maxWidth="Infinity" HBox.hgrow="ALWAYS"/>
+                <Label text="The Fate of Arcana" styleClass="title-text"/>
+
+                <AnchorPane HBox.hgrow="ALWAYS" />
 
                 <HBox alignment="CENTER" spacing="5">
-                    <TextField fx:id="searchInput" promptText="Search Room..." styleClass="retro-input"/>
+                    <TextField fx:id="searchInput" promptText="Search Room..." styleClass="retro-input" prefWidth="250"/>
                     <Button text="🔍" onAction="#handleSearch" styleClass="icon-button"/>
                 </HBox>
 
-                <Button text="+ CREATE ROOM" onAction="#showCreatePopup" styleClass="create-button"/>
+                <Button text="↻" onAction="#handleRefresh" styleClass="icon-button">
+                    <tooltip>
+                        <Tooltip text="Refresh Rooms"/>
+                    </tooltip>
+                </Button>
             </HBox>
         </top>
 
@@ -47,17 +54,16 @@
                 </ScrollPane>
             </VBox>
         </center>
-        
-        <bottom>
-            <Button text="Refresh List" onAction="#handleRefresh" styleClass="refresh-button" BorderPane.alignment="CENTER"/>
-        </bottom>
     </BorderPane>
 
+    <AnchorPane pickOnBounds="false">
+        <Button text="+ CREATE ROOM" onAction="#showCreatePopup" styleClass="create-button"
+                AnchorPane.bottomAnchor="40.0" AnchorPane.rightAnchor="40.0"/>
+    </AnchorPane>
+
     <AnchorPane fx:id="createPopup" visible="false" styleClass="popup-overlay">
-        <VBox alignment="TOP_CENTER" layoutX="0" layoutY="0" maxWidth="400" maxHeight="250" styleClass="popup-box"
-              AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0" AnchorPane.topAnchor="0" AnchorPane.bottomAnchor="0">
-             
-             <translateX>200</translateX> <VBox spacing="20" styleClass="popup-inner" maxWidth="400">
+        <VBox alignment="CENTER" AnchorPane.topAnchor="0" AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0">
+             <VBox spacing="20" styleClass="popup-inner" maxWidth="400">
                  <HBox alignment="CENTER_RIGHT">
                      <Button text="X" onAction="#hideCreatePopup" styleClass="close-button"/>
                  </HBox>
