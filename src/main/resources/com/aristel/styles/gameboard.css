@@ -54,22 +54,25 @@
 }
 .score-text-rank { -fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 14px; }
 
-/* --- CARD GRID --- */
 .card-button {
     -fx-background-color: white;
     -fx-background-radius: 5;
-    -fx-border-color: #bdc3c7;
-    -fx-border-width: 2px;
+    -fx-border-color: #2c3e50; 
+    -fx-border-width: 2px; 
+    -fx-padding: 0;
+    -fx-background-insets: 0;
     -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.5), 5, 0, 2, 2);
     -fx-cursor: hand;
 }
+
 .card-button:hover {
     -fx-border-color: #fbc531;
+    -fx-padding: 0;
+    -fx-background-insets: 0;
     -fx-scale-x: 1.05;
     -fx-scale-y: 1.05;
 }
 
-/* --- POPUPS --- */
 .overlay-dim { -fx-background-color: rgba(0,0,0,0.85); }
 
 .popup-inner {

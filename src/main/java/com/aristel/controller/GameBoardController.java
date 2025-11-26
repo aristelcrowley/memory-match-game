@@ -155,11 +155,16 @@ public class GameBoardController implements IncomingMessageListener {
     private void setupBoard(int totalCards) {
         boardGrid.getChildren().clear();
         cardButtons.clear();
-        int columns = 5; 
+
+        // LOGIC CHANGE: Fixed 5 Rows, Dynamic Columns
+        int rows = 5;
+        int columns = totalCards / rows; // 20->4, 30->6, 40->8
         
         for (int i = 0; i < totalCards; i++) {
             Button btn = new Button();
+            
             btn.setPrefSize(100, 140); 
+            
             btn.getStyleClass().add("card-button"); 
             setButtonImage(btn, backCardImage);
 
@@ -176,9 +181,9 @@ public class GameBoardController implements IncomingMessageListener {
     private void setButtonImage(Button btn, Image img) {
         if (img == null) return;
         ImageView view = new ImageView(img);
-        view.setFitWidth(90);
-        view.setFitHeight(130);
-        view.setPreserveRatio(true);
+        view.setFitWidth(100);
+        view.setFitHeight(140);
+        view.setPreserveRatio(false); 
         btn.setGraphic(view);
     }
 
