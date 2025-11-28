@@ -52,20 +52,36 @@
     -fx-font-style: italic;
 }
 
-/* Score Items */
+.score-item {
+    -fx-background-color: #2f3640;
+    -fx-padding: 5;
+    -fx-border-width: 0 0 1 0;
+    -fx-border-color: #7f8c8d;
+}
+
 .score-text-rank {
     -fx-font-family: "Courier New";
     -fx-text-fill: #bdc3c7; /* Silver */
     -fx-font-weight: bold;
     -fx-font-size: 15px;
     -fx-padding: 5;
+    -fx-alignment: CENTER_LEFT; /* Ensures vertical centering next to icons */
 }
 
-/* --- GAME CARDS (GRID) --- */
+.score-text-disconnected {
+    -fx-font-family: "Courier New";
+    -fx-text-fill: #7f8c8d; 
+    -fx-font-weight: bold;
+    -fx-font-style: italic;
+    -fx-font-size: 15px; 
+    -fx-padding: 5;
+    -fx-alignment: CENTER_LEFT;
+}
+
 .card-button {
-    -fx-background-color: #2f3640; /* Dark background behind image */
+    -fx-background-color: #2f3640; 
     -fx-background-radius: 0;
-    -fx-border-color: #7f8c8d;     /* Subtle grey border initially */
+    -fx-border-color: #7f8c8d;    
     -fx-border-width: 2px;
     -fx-padding: 0;
     -fx-background-insets: 0;
@@ -74,7 +90,7 @@
 }
 
 .card-button:hover {
-    -fx-border-color: #fbc531; /* Gold glow on hover */
+    -fx-border-color: #fbc531; 
     -fx-effect: dropshadow(three-pass-box, #fbc531, 10, 0, 0, 0);
     -fx-scale-x: 1.05;
     -fx-scale-y: 1.05;

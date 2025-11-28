@@ -10,6 +10,7 @@ public class ClientHandler extends Thread {
     private GameRoom currentRoom;
     public int playerID;
     public int score = 0;
+    public boolean isActive = true;
 
     public ClientHandler(Socket socket) {
         this.socket = socket;
@@ -110,6 +111,6 @@ public class ClientHandler extends Thread {
     }
 
     public void sendMessage(String msg) {
-        if (out != null) out.println(msg);
+        if (isActive && out != null) out.println(msg);
     }
 }

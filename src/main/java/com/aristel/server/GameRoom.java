@@ -35,6 +35,23 @@ public class GameRoom {
     }
 
     public synchronized void removePlayer(ClientHandler p) {
+        if (isGameRunning) {
+            p.isActive = false;
+            broadcast("PLAYER_DISCONNECTED:" + p.playerID);
+            broadcast("MSG:Player " + p.playerID + "'s connection was severed by fate.");
+            
+            if (players.get(currentPlayerIndex) == p) {
+                advanceTurn();
+            }
+            
+            boolean anyoneLeft = players.stream().anyMatch(pl -> pl.isActive);
+            if (!anyoneLeft) {
+                isGameRunning = false;
+                GameServer.removeRoom(this.roomId);
+            }
+            return;
+        }
+
         players.remove(p);
 
         if (players.isEmpty()) {
@@ -103,7 +120,6 @@ public class GameRoom {
     
     private void generateBoard(int totalCards) {
         board.clear();
-
         List<Integer> availableImageIds = new ArrayList<>();
         for (int i = 0; i < 20; i++) {
             availableImageIds.add(i);
@@ -157,17 +173,24 @@ public class GameRoom {
         }
     }
 
+    private void advanceTurn() {
+        int originalIndex = currentPlayerIndex;
+        do {
+            currentPlayerIndex = (currentPlayerIndex + 1) % players.size();
+            if (currentPlayerIndex == originalIndex && !players.get(currentPlayerIndex).isActive) break;
+        } while (!players.get(currentPlayerIndex).isActive);
+        
+        broadcast("TURN:" + players.get(currentPlayerIndex).playerID);
+    }
+
     public synchronized void finishMismatch(int c1, int c2) {
         broadcast("HIDE:" + c1 + ":" + c2);
         isWaitingForDelay = false;
-        currentPlayerIndex = (currentPlayerIndex + 1) % players.size();
-        broadcast("MSG:Mismatch! Turn passes to next player.");
-        broadcast("TURN:" + players.get(currentPlayerIndex).playerID);
+        advanceTurn();
     }
 
     private void checkGameOver() {
         boolean allMatched = true;
-        
         for (boolean b : matchedCards) {
             if (!b) { allMatched = false; break; }
         }
@@ -182,6 +205,13 @@ public class GameRoom {
 
         isGameRunning = false; 
         
+        players.removeIf(p -> !p.isActive);
+        
+        if (players.isEmpty()) {
+            GameServer.removeRoom(this.roomId);
+            return;
+        }
+
         board.clear();
         matchedCards = null;
         firstCardIndex = -1;

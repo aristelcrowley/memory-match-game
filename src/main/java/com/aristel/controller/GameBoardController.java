@@ -7,12 +7,14 @@ import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
+import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.util.Duration;
 
@@ -47,6 +49,7 @@ public class GameBoardController implements IncomingMessageListener {
     private int currentTurnId = -1; 
     private Map<Integer, Integer> playerScores = new HashMap<>();
     private boolean inputLocked = true; 
+    private Set<Integer> disconnectedPlayers = new HashSet<>();
 
     public void initialize() {
         this.myPlayerId = ClientConnection.getInstance().myPlayerId;
@@ -54,6 +57,7 @@ public class GameBoardController implements IncomingMessageListener {
         loadImages();
         
         ClientConnection.getInstance().sendMessage("GET_GAME_STATE");
+        disconnectedPlayers.clear();
         inputLocked = true; 
     }
 
@@ -77,6 +81,12 @@ public class GameBoardController implements IncomingMessageListener {
             case "GAME_INIT": 
                 int totalCards = Integer.parseInt(parts[1]);
                 Platform.runLater(() -> startSequence(totalCards));
+                break;
+
+            case "PLAYER_DISCONNECTED":
+                int pid = Integer.parseInt(message.split(":")[1]);
+                disconnectedPlayers.add(pid);
+                Platform.runLater(this::renderScoreboard);
                 break;
 
             case "SCORES":
@@ -247,16 +257,36 @@ public class GameBoardController implements IncomingMessageListener {
 
         int rank = 1;
         for (Map.Entry<Integer, Integer> entry : sortedList) {
-            String name = "Player " + entry.getKey();
+            int pid = entry.getKey();
+            String name = "Player " + pid;
             
             Label lbl = new Label(rank + ". " + name + ": " + entry.getValue() + " pts");
-            lbl.getStyleClass().add("score-text-rank");
             
-            if (entry.getKey() == myPlayerId) {
-                lbl.setStyle("-fx-text-fill: #4cd137;"); 
+            if (disconnectedPlayers.contains(pid)) {
+                lbl.getStyleClass().add("score-text-disconnected");
+
+                HBox ghostBox = new HBox(10); 
+                ghostBox.setAlignment(Pos.CENTER_LEFT);
+                
+                try {
+                    ImageView disImg = new ImageView(new Image(getClass().getResourceAsStream("/com/aristel/assets/images/disconnected.png")));
+                    disImg.setFitWidth(30);
+                    disImg.setFitHeight(30);
+                    ghostBox.getChildren().addAll(lbl, disImg);
+                    scoreContainer.getChildren().add(ghostBox);
+                } catch (Exception e) { 
+                    scoreContainer.getChildren().add(lbl); 
+                }
+            } else {
+                lbl.getStyleClass().add("score-text-rank");
+                if (pid == myPlayerId) {
+                    lbl.setStyle("-fx-text-fill: #4cd137;"); 
+                } else {
+                    lbl.setStyle("-fx-text-fill: white;"); 
+                }
+                scoreContainer.getChildren().add(lbl);
             }
             
-            scoreContainer.getChildren().add(lbl);
             rank++;
         }
     }
@@ -267,12 +297,16 @@ public class GameBoardController implements IncomingMessageListener {
         int maxScore = -1;
         List<Integer> winners = new ArrayList<>();
         for (Map.Entry<Integer, Integer> entry : playerScores.entrySet()) {
+            int pid = entry.getKey();
+            
+            if (disconnectedPlayers.contains(pid)) continue; 
+
             if (entry.getValue() > maxScore) {
                 maxScore = entry.getValue();
                 winners.clear();
-                winners.add(entry.getKey());
+                winners.add(pid);
             } else if (entry.getValue() == maxScore) {
-                winners.add(entry.getKey());
+                winners.add(pid);
             }
         }
 
