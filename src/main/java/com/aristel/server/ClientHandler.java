@@ -63,6 +63,13 @@ public class ClientHandler extends Thread {
                             }
                         }
                     }
+                } else if (command.equals("KICK")) {
+                    try {
+                        int targetId = Integer.parseInt(parts[1]);
+                        if (currentRoom != null) {
+                            currentRoom.kickPlayer(this, targetId);
+                        }
+                    } catch (Exception e) { System.out.println("Kick error"); }
                 } else if (command.equals("START")) {
                     if (currentRoom != null) {
                         currentRoom.startGame(this); 

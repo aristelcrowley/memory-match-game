@@ -10,7 +10,9 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 
 public class RoomController implements IncomingMessageListener {
@@ -20,8 +22,10 @@ public class RoomController implements IncomingMessageListener {
     @FXML private VBox playerContainer;
     @FXML private Button startButton;
     @FXML private TextArea roomLog;
+    @FXML private AnchorPane kickedPopup;
 
-    private int myPlayerId = -1; 
+    private int myPlayerId = -1;
+    private int currentMasterId = -1; 
 
     public void initialize() {
         this.myPlayerId = ClientConnection.getInstance().myPlayerId;
@@ -31,8 +35,21 @@ public class RoomController implements IncomingMessageListener {
         addToLog("Destiny confronted you as you entered the room.");
     }
 
-    @FXML private void handleStart() { ClientConnection.getInstance().sendMessage("START"); }
-    @FXML private void handleLeave() { ClientConnection.getInstance().sendMessage("LEAVE"); }
+    @FXML 
+    private void handleStart() { 
+        ClientConnection.getInstance().sendMessage("START"); 
+    }
+
+    @FXML 
+    private void handleLeave() { 
+        ClientConnection.getInstance().sendMessage("LEAVE"); 
+    }
+    
+    @FXML
+    private void handleReturnToLobby() {
+        ClientConnection.getInstance().sendMessage("LEAVE"); 
+        MainApp.loadView("views/LobbyView.fxml");
+    }
 
     @Override
     public void onMessageReceived(String message) {
@@ -41,7 +58,6 @@ public class RoomController implements IncomingMessageListener {
         }
         else if (message.startsWith("MSG:")) {
             String text = message.substring(4);
-            System.out.println("[ROOM LOG] Adding: " + text); 
             Platform.runLater(() -> addToLog(text));
         }
         else if (message.startsWith("GAME_START:")) {
@@ -50,14 +66,15 @@ public class RoomController implements IncomingMessageListener {
         else if (message.equals("LEFT_ROOM")) {
             Platform.runLater(() -> MainApp.loadView("views/LobbyView.fxml"));
         }
+        else if (message.equals("KICKED")) {
+            Platform.runLater(() -> kickedPopup.setVisible(true));
+        }
     }
 
     private void addToLog(String text) {
         if (roomLog != null) {
             roomLog.appendText("> " + text + "\n");
             roomLog.positionCaret(roomLog.getLength()); 
-        } else {
-            System.err.println("ERROR: roomLog is NULL! Check FXML fx:id");
         }
     }
 
@@ -65,14 +82,16 @@ public class RoomController implements IncomingMessageListener {
         try {
             String[] parts = message.split(":");
             String roomName = parts[1];
-            int masterId = Integer.parseInt(parts[2]);
+            
+            this.currentMasterId = Integer.parseInt(parts[2]);
+            
             int count = Integer.parseInt(parts[3]);
             String[] playerIds = (parts.length > 4) ? parts[4].split(",") : new String[0];
 
             roomNameLabel.setText(roomName);
             playerCountLabel.setText(count + "/4 Players");
 
-            if (myPlayerId == masterId) {
+            if (myPlayerId == currentMasterId) {
                 startButton.setDisable(false);
                 startButton.setText("COMMENCE");
             } else {
@@ -80,7 +99,7 @@ public class RoomController implements IncomingMessageListener {
                 startButton.setText("WAITING...");
             }
 
-            renderCards(playerIds, masterId);
+            renderCards(playerIds, currentMasterId);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -131,15 +150,30 @@ public class RoomController implements IncomingMessageListener {
             try {
                 ImageView masterImg = new ImageView(new Image(getClass().getResourceAsStream("/com/aristel/assets/images/roommaster.png")));
                 masterImg.setFitWidth(25);
-                masterImg.setFitWidth(25);
                 masterImg.setFitHeight(25);
                 card.getChildren().add(masterImg);
             } catch (Exception e) { System.err.println("Missing roommaster.png"); }
         }
 
         HBox spacer = new HBox();
-        javafx.scene.layout.HBox.setHgrow(spacer, javafx.scene.layout.Priority.ALWAYS);
+        HBox.setHgrow(spacer, Priority.ALWAYS);
         card.getChildren().add(spacer);
+
+        if (this.myPlayerId == this.currentMasterId && playerId != this.myPlayerId) {
+            try {
+                Button kickBtn = new Button();
+                kickBtn.getStyleClass().add("kick-button");
+                
+                ImageView kickIcon = new ImageView(new Image(getClass().getResourceAsStream("/com/aristel/assets/images/kick.png")));
+                kickIcon.setFitWidth(25);
+                kickIcon.setFitHeight(25);
+                kickBtn.setGraphic(kickIcon);
+                
+                kickBtn.setOnAction(e -> ClientConnection.getInstance().sendMessage("KICK:" + playerId));
+                
+                card.getChildren().add(kickBtn);
+            } catch (Exception e) { System.err.println("Missing kick.png"); }
+        }
 
         return card;
     }

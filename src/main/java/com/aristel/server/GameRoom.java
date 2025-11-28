@@ -44,7 +44,7 @@ public class GameRoom {
                 int prevRoomMaster = roomMaster.playerID;
                 roomMaster = players.get(0);
                 int curRoomMaster = roomMaster.playerID;
-                broadcast("MSG:Overlord Player " + prevRoomMaster + " tries to futilely escape, Player " + curRoomMaster + " ascend to the throne.");
+                broadcast("MSG:The Overlord(Player " + prevRoomMaster + ") tries to futilely escape, Player " + curRoomMaster + " ascend to the throne.");
             } 
 
             broadcast("MSG:Player " + p.playerID + " meets their fated demise.");
@@ -56,6 +56,25 @@ public class GameRoom {
                 broadcast("MSG:Destiny stand brave as there is not enough players to challenge it.");
             }
         }
+    }
+
+    public synchronized void kickPlayer(ClientHandler requester, int targetId) {
+        if (requester != roomMaster) return;
+        
+        ClientHandler victim = null;
+        for (ClientHandler p : players) {
+            if (p.playerID == targetId) {
+                victim = p;
+                break;
+            }
+        }
+        if (victim == null || victim == roomMaster) return; 
+
+        victim.sendMessage("KICKED");
+        broadcast("MSG:The Overlord has banished Player " + targetId + " from partaking in this destiny.");
+        players.remove(victim);
+
+        broadcastRoomState();
     }
 
     public synchronized void startGame(ClientHandler requester) {
