@@ -40,9 +40,9 @@ public class LobbyController implements IncomingMessageListener {
 
     @FXML
     private void handleSearch() {
-        renderRooms(lastRoomData, searchInput.getText());
+        ClientConnection.getInstance().sendMessage("GET_ROOMS");
     }
-
+    
     @FXML
     private void handleRefresh() {
         ClientConnection.getInstance().sendMessage("GET_ROOMS");
