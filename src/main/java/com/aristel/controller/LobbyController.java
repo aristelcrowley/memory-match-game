@@ -26,12 +26,15 @@ public class LobbyController implements IncomingMessageListener {
     @FXML private Label errorLabel;
 
     private String lastRoomData = ""; 
+    private boolean isSearchActive = false;
 
     public void initialize() {
         boolean connected = ClientConnection.getInstance().connect("localhost", 12345);
         if (connected) {
             statusLabel.setText("Connected. Fetching rooms...");
             ClientConnection.getInstance().setMessageListener(this);
+
+            isSearchActive = false;
             ClientConnection.getInstance().sendMessage("GET_ROOMS");
         } else {
             statusLabel.setText("Failed to connect to server!");
@@ -40,11 +43,14 @@ public class LobbyController implements IncomingMessageListener {
 
     @FXML
     private void handleSearch() {
+        isSearchActive = true;
         ClientConnection.getInstance().sendMessage("GET_ROOMS");
     }
-    
+
     @FXML
     private void handleRefresh() {
+        isSearchActive = false;
+        searchInput.clear();
         ClientConnection.getInstance().sendMessage("GET_ROOMS");
     }
 
@@ -74,7 +80,8 @@ public class LobbyController implements IncomingMessageListener {
     public void onMessageReceived(String message) {
         if (message.startsWith("ROOM_LIST:")) {
             lastRoomData = message.substring(10); 
-            Platform.runLater(() -> renderRooms(lastRoomData, searchInput.getText()));
+            String filterText = isSearchActive ? searchInput.getText() : "";
+            Platform.runLater(() -> renderRooms(lastRoomData, filterText));
         } else if (message.equals("ERROR:FULL")) {
             Platform.runLater(() -> showError("There are too many souls in that room already."));
         } else if (message.equals("ERROR:IN_GAME")) {
@@ -102,6 +109,8 @@ public class LobbyController implements IncomingMessageListener {
         }
 
         String[] rooms = data.split(";");
+        boolean foundMatch = false;
+
         for (String roomStr : rooms) {
             if (roomStr.isEmpty()) continue;
             
@@ -119,6 +128,13 @@ public class LobbyController implements IncomingMessageListener {
 
             VBox card = createRoomCard(name, master, count, status);
             roomContainer.getChildren().add(card);
+            foundMatch = true;
+        }
+        
+        if (!foundMatch && filter != null && !filter.isEmpty()) {
+            statusLabel.setText("No rooms match '" + filter + "'");
+        } else {
+            statusLabel.setText("Rooms Available");
         }
     }
 
