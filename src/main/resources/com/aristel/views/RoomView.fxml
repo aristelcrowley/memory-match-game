@@ -28,7 +28,8 @@
             <padding><Insets top="30" right="30" bottom="30" left="30"/></padding>
 
             <VBox alignment="CENTER" spacing="5">
-                <padding><Insets bottom="30"/></padding> <Label fx:id="roomNameLabel" text="LOADING..." styleClass="room-title"/>
+                <padding><Insets bottom="30"/></padding>
+                <Label fx:id="roomNameLabel" text="LOADING..." styleClass="room-title"/>
                 <Label fx:id="playerCountLabel" text="Players: -/4" styleClass="room-subtitle"/>
             </VBox>
 
@@ -37,7 +38,7 @@
                     </VBox>
             </ScrollPane>
 
-            <HBox spacing="20" alignment="CENTER">
+            <HBox spacing="20" alignment="CENTER_RIGHT">
                 <Button text="ABANDON" onAction="#handleLeave" styleClass="retro-leave-button"/>
                 <Button fx:id="startButton" text="COMMENCE" onAction="#handleStart" styleClass="retro-start-button" disable="true"/>
             </HBox>

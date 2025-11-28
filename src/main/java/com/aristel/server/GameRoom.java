@@ -41,8 +41,10 @@ public class GameRoom {
             GameServer.removeRoom(this.roomId);
         } else {   
             if (p == roomMaster) {
+                int prevRoomMaster = roomMaster.playerID;
                 roomMaster = players.get(0);
-                broadcast("MSG:Elden lord tries to futilely escape, Player " + roomMaster.playerID + " ascend to the throne.");
+                int curRoomMaster = roomMaster.playerID;
+                broadcast("MSG:Overlord Player " + prevRoomMaster + " tries to futilely escape, Player " + curRoomMaster + " ascend to the throne.");
             } 
 
             broadcast("MSG:Player " + p.playerID + " meets their fated demise.");
