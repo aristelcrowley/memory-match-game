@@ -1,6 +1,6 @@
 package com.aristel.controller;
 
-import com.aristel.MainApp;
+import com.aristel.App;
 import com.aristel.network.ClientConnection;
 import com.aristel.network.IncomingMessageListener;
 import com.aristel.util.SoundManager;
@@ -125,7 +125,7 @@ public class GameBoardController implements IncomingMessageListener {
                 break;
             
             case "BACK_TO_ROOM":
-                Platform.runLater(() -> MainApp.loadView("views/RoomView.fxml"));
+                Platform.runLater(() -> App.loadView("views/RoomView.fxml"));
                 break;
         }
     }

@@ -1,6 +1,6 @@
 package com.aristel.controller;
 
-import com.aristel.MainApp;
+import com.aristel.App;
 import com.aristel.network.ClientConnection;
 import com.aristel.network.IncomingMessageListener;
 import com.aristel.util.SoundManager;
@@ -52,7 +52,7 @@ public class RoomController implements IncomingMessageListener {
     @FXML
     private void handleReturnToLobby() {
         ClientConnection.getInstance().sendMessage("LEAVE"); 
-        MainApp.loadView("views/LobbyView.fxml");
+        App.loadView("views/LobbyView.fxml");
     }
 
     @Override
@@ -70,10 +70,10 @@ public class RoomController implements IncomingMessageListener {
             }
         }
         else if (message.startsWith("GAME_START:")) {
-            Platform.runLater(() -> MainApp.loadView("views/GameBoardView.fxml"));
+            Platform.runLater(() -> App.loadView("views/GameBoardView.fxml"));
         }
         else if (message.equals("LEFT_ROOM")) {
-            Platform.runLater(() -> MainApp.loadView("views/LobbyView.fxml"));
+            Platform.runLater(() -> App.loadView("views/LobbyView.fxml"));
         }
         else if (message.equals("KICKED")) {
             Platform.runLater(() -> {

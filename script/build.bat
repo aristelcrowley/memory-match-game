@@ -54,7 +54,7 @@ echo.
 echo ==========================================
 echo      STEP 4: CREATING MANIFESTS
 echo ==========================================
-echo Main-Class: com.aristel.Launcher> manifest_client.txt
+echo Main-Class: com.aristel.App> manifest_client.txt
 echo.>> manifest_client.txt
 
 echo Main-Class: com.aristel.server.GameServer> manifest_server.txt

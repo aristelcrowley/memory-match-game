@@ -1,6 +1,6 @@
 package com.aristel.controller;
 
-import com.aristel.MainApp;
+import com.aristel.App;
 import com.aristel.network.ClientConnection;
 import com.aristel.network.IncomingMessageListener;
 import com.aristel.util.SoundManager;
@@ -195,7 +195,7 @@ public class LobbyController implements IncomingMessageListener {
         } else if (message.startsWith("JOINED:")) {
             int myId = Integer.parseInt(message.split(":")[1]);
             ClientConnection.getInstance().myPlayerId = myId;
-            Platform.runLater(() -> MainApp.loadView("views/RoomView.fxml"));
+            Platform.runLater(() -> App.loadView("views/RoomView.fxml"));
         }
     }
 

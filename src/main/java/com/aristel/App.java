@@ -11,7 +11,7 @@ import java.io.IOException;
 import com.aristel.network.ClientConnection;
 
 
-public class MainApp extends Application {
+public class App extends Application {
 
     private static Stage primaryStage;
 
@@ -27,7 +27,7 @@ public class MainApp extends Application {
 
     public static void loadView(String fxmlPath) {
         try {
-            FXMLLoader loader = new FXMLLoader(MainApp.class.getResource(fxmlPath));
+            FXMLLoader loader = new FXMLLoader(App.class.getResource(fxmlPath));
             Parent newRoot = loader.load();
             
             if (primaryStage.getScene() == null) {
