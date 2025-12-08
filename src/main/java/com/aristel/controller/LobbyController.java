@@ -165,8 +165,9 @@ public class LobbyController implements IncomingMessageListener {
         } 
         else if (message.equals("ERROR:IN_GAME")) {
             Platform.runLater(() -> showError("FATE SEALED", "They done vainly wagered their fates in that room."));
-        } 
-        else if (message.startsWith("MSG:") || message.startsWith("ERROR:")) {
+        } else if (message.equals("ERROR:ROOM_EXIST")) {
+            Platform.runLater(() -> showError("DESTINY TAKEN", "A realm by that name has already been woven into existence."));
+        } else if (message.startsWith("MSG:") || message.startsWith("ERROR:")) {
             Platform.runLater(() -> statusLabel.setText(message.split(":", 2)[1]));
         } 
         else if (message.startsWith("JOINED:")) {

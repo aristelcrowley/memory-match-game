@@ -43,7 +43,7 @@ public class ClientHandler extends Thread {
                             sendMessage("MSG:You are the Room Master!");
                         }
                     } else {
-                        sendMessage("ERROR:Room '" + roomId + "' already exists.");
+                        sendMessage("ERROR:ROOM_EXIST");
                     }
                 } else if (command.equals("GET_ROOMS")) {
                     sendMessage(GameServer.getRoomList());
